@@ -18019,6 +18019,25 @@ video {
           animation: bounce 1s infinite;
 }
 
+.loader {
+  border: 16px solid #feebc8;
+  border-top: 16px solid #ed8936;
+  border-radius: 50%;
+  margin-top: -60px;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 1s linear infinite;
+          animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg);
+  }
+
+  100% { transform: rotate(360deg);
+  }
+}
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;
