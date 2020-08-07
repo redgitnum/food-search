@@ -10,12 +10,12 @@ export default function() {
         dispatch(fetchFood(e.target.searchInput.value.trim()))
     }
     return(
-        <div className="fixed">
+        <div className="fixed w-full">
             <form onSubmit={searchFood} className='flex relative'>
                 <input
                 name="searchInput"
                 placeholder='searchbar'
-                className='h-16 w-full min-w-0 text-3xl shadow appearance-none border py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline'
+                className='h-16 w-full  text-3xl shadow appearance-none border py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline'
                 />
                 <button type='submit' className="w-16 h-16 absolute right-0">
                     <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enableBackground="new 0 0 48 48">

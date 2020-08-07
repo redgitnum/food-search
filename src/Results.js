@@ -17,48 +17,97 @@ export default function() {
             </div>
             }
             {modal ?
-            <div className="flex flex-col w-full h-full bg-orange-400">
-                <div id="title" className="flex">
-                    <div>
-                        <h2>
+            <div className="flex flex-col w-full h-full bg-orange-500">
+                <div id="title" className="flex p-3 justify-between">
+                    <div className="flex flex-col justify-between font-semibold pr-2">
+                        <h2 className="text-white text-lg ">
                         Pizza Guseppe z mięsem wołowym i warzywami, 
                         głęboko mrożona - Dr. Oetker - 420 g
                         </h2>
-                        <p>EAN: 5900437005577</p>
+                        <p className="text-sm text-gray-900">EAN: 5900437005577</p>
                     </div>
                     <div>
-                        <div>
-                            <img src={placeholder}></img>
+                        <div className="w-32 border-solid border-2 border-white h-32 p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
+                            <img className="object-contain h-full w-full" src={placeholder}></img>
                         </div>
                     </div>
                 </div>
-                <div id="basic-info">
-                    <div className="flex flex-wrap m-2 p-2 rounded shadow-md">
-                        <div className="bg-green-500 w-1/2 m-1">
-                            <div>QUANTITY</div>
-                            <div>420 g</div>
+                <div id="basic-info" className="flex flex-wrap bg-gray-200 m-3 overflow-hidden gap-px rounded-md shadow-card">
+                    <div className="flex flex-col items-center bg-green-bright flex-auto w-32 p-2">
+                        <div className="text-xs text-gray-800 font-bold">QUANTITY</div>
+                        <div className="text-xl font-semibold">420 g</div>
+                    </div>
+                    <div className="flex flex-col items-center bg-green-bright flex-auto w-32 p-2">
+                        <div className="text-xs text-gray-800 font-bold">BRANDS</div>
+                        <div className="text-xl font-semibold">Dr Oetker</div>
+                    </div>
+                    <div className="flex flex-col items-center bg-green-bright flex-auto w-32 p-2">
+                        <div className="text-xs text-gray-800 font-bold">STORES</div>
+                        <div className="text-xl font-semibold">Dino</div>
+                    </div>
+                    <div className="flex flex-col items-center bg-green-bright flex-auto w-32 p-2">
+                        <div className="text-xs text-gray-800 font-bold">COUNTRIES SOLD IN</div>
+                        <div className="text-xl font-semibold">Polska</div>
+                    </div>
+                </div>
+                <div id="warnings" className="flex flex-wrap m-3 bg-gray-200 overflow-hidden gap-px rounded-md shadow-card">
+                    <div className="flex flex-col items-center bg-red-500 flex-auto w-32 p-2">
+                        <div className="text-xs text-gray-200 font-bold">INGREDIENTS ANALYSIS</div>
+                        <div className="flex flex-wrap gap-2 p-2 justify-center">
+                            <div className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm font-semibold">Palm-oil</div>
+                            <div className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm font-semibold">Non-vegan</div>
+                            <div className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm font-semibold">Non-vegetarian</div>
                         </div>
-                        <div className="bg-green-500 w-1/2 m-1">
-                            <div>BRANDS</div>
-                            <div>Dr Oetker</div>
-                        </div>
-                        <div className="bg-green-500 w-1/2">
-                            <div>STORES</div>
-                            <div>Dino</div>
-                        </div>
-                        <div className="bg-green-500 w-1/2">
-                            <div>COUNTRIES SOLD IN</div>
-                            <div>Polska</div>
+                    </div>
+                    <div className="flex flex-col items-center bg-red-500 flex-auto w-32 p-2">
+                        <div className="text-xs text-gray-200 font-bold">ADDITIVES</div>
+                        <div className="flex flex-wrap gap-2 p-2 justify-center">
+                            <div className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm text-center font-semibold">E14XX - Modified Starch</div>
+                            <div className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm text-center font-semibold">E160a - Alpha-carotene</div>
                         </div>
                     </div>
                 </div>
-                <div id="warnings">
+                <div id="nova-group" className="flex flex-wrap m-3 bg-gray-200 overflow-hidden gap-px rounded-md shadow-card">
+                    <div className="bg-orange-300 w-full p-2">
+                        <div className="text-2xl text-gray-900 text-center font-semibold">NOVA group</div>
+                        <div className="bg-red-700 flex justify-center w-20 h-20 my-1 mx-auto rounded-full text-5xl text-gray-300 font-bold">4</div>
+                        <div className="text-sm text-gray-900 text-center font-semibold">4 - Ultra processed food and drink products </div>
+                    </div>
                 </div>
-                <div id="nova-group">
+                <div id="nutrition-levels" className="flex flex-wrap m-3 bg-gray-200 overflow-hidden gap-px rounded-md shadow-card">
+                    <div className="bg-teal-500 w-full p-2">
+                        <div className="text-2xl text-gray-200 text-center font-semibold">Nutrition levels for 100g</div>
+                    </div>
+                    <div className="flex flex-wrap gap-px text-gray-200 bg-gray-200 flex-auto">
+                        <div className="flex flex-col justify-between flex-1 text-center font-semibold text-sm bg-teal-500 p-2 pb-4">
+                            <div>FAT</div>
+                            <div className="text-xl pt-2">11.2g</div>
+                        </div>
+                        <div className="flex flex-col justify-between flex-1 text-center font-semibold text-sm bg-teal-500 p-2 pb-4">
+                            <div>SUGARS</div>
+                            <div className="text-xl pt-2">11.2g</div>
+                        </div>
+                        <div className="flex flex-col justify-between flex-1 text-center font-semibold text-sm bg-teal-500 p-2 pb-4">
+                            <div>SATURATED FAT</div>
+                            <div className="text-xl pt-2">11.2g</div>
+                        </div>
+                        <div className="flex flex-col justify-between flex-1 text-center font-semibold text-sm bg-teal-500 p-2 pb-4">
+                            <div>SALT</div>
+                            <div className="text-xl pt-2">11.2g</div>
+                        </div>
+                    </div>
                 </div>
-                <div id="nutrition-levels">
-                </div>
-                <div id="nutri-score">
+                <div id="nutri-score" className="flex flex-wrap m-3 bg-gray-200 gap-px rounded-md shadow-card">
+                    <div className="bg-teal-500 w-full p-2 rounded-md rounded-b-none">
+                        <div className="text-2xl text-gray-200 text-center font-semibold">Nutrition levels for 100g</div>
+                    </div>
+                    <div className="flex flex-wrap col-gap-px bg-gray-200 flex-auto text-5xl font-semibold text-center">
+                        <div className="bg-nutri-a flex-1 text-white text-opacity-75 pb-1 rounded-md rounded-t-none rounded-r-none">A</div>
+                        <div className="bg-nutri-b flex-1 text-white transform scale-150 text-opacity-100 pb-1">B</div>
+                        <div className="bg-nutri-c flex-1 text-white text-opacity-75 pb-1">C</div>
+                        <div className="bg-nutri-d flex-1 text-white text-opacity-75 pb-1">D</div>
+                        <div className="bg-nutri-e flex-1 text-white text-opacity-75 pb-1">E</div>
+                    </div>
                 </div>
                 <div id="nutri-facts">
                 </div>

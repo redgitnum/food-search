@@ -18038,6 +18038,38 @@ video {
   }
 }
 
+.bg-green-bright {
+  background: #B3E561;
+}
+
+.shadow-card {
+  box-shadow: 4px 4px 6px 1px rgba(0,0,0,0.40);
+}
+
+.shadow-pill {
+  box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.30);
+}
+
+.bg-nutri-a {
+  background: #4BC600;
+}
+
+.bg-nutri-b {
+  background: #7CDD01;
+}
+
+.bg-nutri-c {
+  background: #C5E500;
+}
+
+.bg-nutri-d {
+  background: #F4B717;
+}
+
+.bg-nutri-e {
+  background: #DE5000;
+}
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;
