@@ -7,7 +7,10 @@ export default function() {
 
     const searchFood = (e) => {
         e.preventDefault()
-        dispatch(fetchFood(e.target.searchInput.value.trim()))
+        dispatch(fetchFood({
+            value: e.target.searchInput.value.trim(), 
+            page: 5
+        }))
     }
     return(
         <div className="fixed w-full">

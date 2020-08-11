@@ -4,6 +4,12 @@
 
 @import "tailwindcss/utilities";
 
+.appearance-hide {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  margin: 0;
+}
+
 .loader {
     border: 16px solid #feebc8;
     border-top: 16px solid #ed8936;

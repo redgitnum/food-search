@@ -4,14 +4,15 @@ export const fetchFood = createAsyncThunk(
     'search/food',
     async (input) => {
         try{
-            const response = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${input}&search_simple=1&action=process&json=1&page=1`,
+            const response = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${input.value}&search_simple=1&action=process&json=1&page_size=20&page=${input.page}`,
                 {
                     'User-Agent': 'Food search app (practice) - windows - Version 1.0'
                 }
             )
             return {
                 data: await response.json(),
-                query: input
+                query: input.value,
+                page: input.page
             }
         } catch(err) {
             return err.message
@@ -21,7 +22,7 @@ export const fetchFood = createAsyncThunk(
 
 export const foodSlice = createSlice({
     name: 'search',
-    initialState: {data: {}, loader: false, query: ''},
+    initialState: {data: {}, loader: false, query: '', page: 1},
     extraReducers: {
         [fetchFood.pending]: (state, action) => {
             state.data = 'pending'
@@ -35,6 +36,7 @@ export const foodSlice = createSlice({
             state.data = action.payload.data
             state.loader = false
             state.query = action.payload.query
+            state.page = action.payload.page
         }
     }
 })
