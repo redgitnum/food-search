@@ -22,9 +22,14 @@ export const fetchFood = createAsyncThunk(
 
 export const foodSlice = createSlice({
     name: 'search',
-    initialState: {data: {}, loader: false, query: '', page: 1},
+    initialState: {data: {}, loader: false, query: '', page: 1, modal: false},
+    reducers: {
+        modalChange: (state, action) => {
+            state.modal = action.payload
+        }
+    },
     extraReducers: {
-        [fetchFood.pending]: (state, action) => {
+        [fetchFood.pending]: (state) => {
             state.data = 'pending'
             state.loader = true
         },
@@ -40,6 +45,8 @@ export const foodSlice = createSlice({
         }
     }
 })
+
+export const { modalChange } = foodSlice.actions
 
 export default configureStore({
     reducer: foodSlice.reducer

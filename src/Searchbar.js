@@ -1,15 +1,17 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { fetchFood } from './features'
+import { fetchFood, modalChange } from './features'
 
 export default function() {
     const dispatch = useDispatch()
 
+
     const searchFood = (e) => {
         e.preventDefault()
+        dispatch(modalChange(false))
         dispatch(fetchFood({
             value: e.target.searchInput.value.trim(), 
-            page: 5
+            page: 1
         }))
     }
     return(
