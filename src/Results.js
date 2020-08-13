@@ -1,7 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import placeholder from './front_fr.42.400.jpg'
-import placeholder2 from './front_fr.70.400.jpg'
 import {ReactComponent as PlaceholderImg} from './placeholder.svg';
 import { fetchFood, modalChange } from './features'
 
@@ -15,11 +13,18 @@ export default function() {
     const [foodIndex, setFoodIndex] = useState(null)
     const [newPage, setNewPage] = useState(page)
 
+    useEffect(() => {
+        setNewPage(page)
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }, [page])
+
     const warningColor = (data) => {
         switch(data) {
             case 'high' : return 'bg-nutri-e';
             case 'moderate' : return 'bg-nutri-d';
-            default : return 'bg-nutri-a'
+            case 'low' : return 'bg-nutri-a';
+            default : return 'bg-gray-500'
         }
     }    
 
@@ -49,7 +54,7 @@ export default function() {
                         }
                         
                     </div>
-                    <div className="bg-gray-300 h-16 overflow-hidden font-semibold leading-tight text-center">
+                    <div className="flex justify-center py-px px-1 bg-gray-300 h-16 overflow-hidden font-semibold leading-tight text-center">
                         {product.product_name_en || product.product_name || product.brands}
                     </div>
                 </div>
@@ -80,7 +85,12 @@ export default function() {
                                 page: Number(e.target.page.value)
                             }))
                             }}>
-                            <input name="page" value={newPage} onChange={(e) => setNewPage(Number(e.target.value))} type="number" min="1" max={Math.ceil(maxPage).toString()} className="appearance-hide text-center w-full"></input>
+                            <input name="page" value={newPage} onChange={(e) => {
+                                if(e.target.value >= maxPage) {
+                                    setNewPage(maxPage)
+                                } else setNewPage(Number(e.target.value))
+                                
+                                }} type="number" min="1" max={Math.ceil(maxPage).toString()} className="appearance-hide text-center w-full"></input>
                         </form>
                     <div className="p-2 rounded-md rounded-b-none rounded-l-none bg-blue-400 text-3xl cursor-pointer" onClick={() => {
                         if(page!= maxPage){ 
@@ -101,23 +111,31 @@ export default function() {
     }
 
     return(
+        <>
+        {data.count ?
         <div className="pt-16 flex flex-col bg-gray-100">
             {modal ?
-            <div className="flex flex-col w-full h-full bg-orange-500 z-50">
-                <div id="up-button" className="py-1 pl-3 bg-gray-100 flex text-lg font-medium justify-start items-center cursor-pointer" onClick={() => {
+            <div className="flex flex-col w-full h-full bg-orange-500 max-w-screen-md mx-auto">
+                <div id="fast-back-button" className="py-1 pl-3 bg-gray-100 flex text-lg sm:text-2xl font-medium justify-start items-center cursor-pointer" onClick={() => {
                     dispatch(modalChange(false))
                     setFoodIndex(null)
                     }}>
                 &#10554; back to results
                 </div>
-                <div id="title" className="flex p-3 justify-between">
+                {!data.products[foodIndex].complete ?
+                    <div id="entry-incomplete" className="p-3 bg-red-300 font-semibold text-lg">
+                        This product page is not complete. 
+                        You can help to complete it by going to <a href={data.products[foodIndex].url} target="_blank" className="underline">Open Food Facts product page</a> and editing or adding more data.
+                    </div>
+                : null}
+                <div id="title" className="flex p-3 justify-between sm:justify-center">
                     <div className="flex flex-col justify-center items-center font-semibold pr-2">
-                        <h2 className="text-white text-xl pr-6">
+                        <h2 className="text-white text-xl sm:text-3xl pr-6">
                         {data.products[foodIndex].product_name_en || data.products[foodIndex].product_name || data.products[foodIndex].brands }
                         </h2>
                     </div>
                     <div>
-                        <div className="w-32 border-solid border-2 border-white h-32 p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
+                        <div className="w-32 h-32 sm:w-48 sm:h-48 border-solid border-2 border-white p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
                         {data.products[foodIndex].image_small_url ? 
                         <img className="object-contain w-full h-full" src={data.products[foodIndex].image_small_url}></img>
                         :
@@ -151,6 +169,7 @@ export default function() {
                         </div>
                     </div>
                 </div>
+                {(data.products[foodIndex].ingredients_analysis_tags && data.products[foodIndex].additives_tags) &&
                 <div id="warnings" className="flex flex-wrap m-3 bg-gray-200 overflow-hidden gap-px rounded-md shadow-card">
                     <div className="flex flex-col items-center bg-red-500 flex-auto w-32 p-2">
                         <div className="text-xs text-gray-200 font-bold">INGREDIENTS ANALYSIS</div>
@@ -169,6 +188,7 @@ export default function() {
                         </div>
                     </div>
                 </div>
+                }
                 {data.products[foodIndex].nova_groups_tags && 
                 <div id="nova-group" className="flex flex-wrap m-3 bg-gray-200 overflow-hidden gap-px rounded-md shadow-card">
                     <div className="bg-orange-300 w-full p-2">
@@ -188,23 +208,24 @@ export default function() {
                     </div>
                     <div className="flex flex-wrap gap-px text-white bg-gray-200 justify-evenly text-center flex-auto font-bold">
                         <div className={`flex flex-col justify-between flex-1 text-xs ${warningColor(data.products[foodIndex].nutrient_levels.fat)} p-2 pb-4`}>
-                            <div>FAT</div>
-                            <div className="text-xl pt-2">{data.products[foodIndex].nutriments.fat}g</div>
+                            <div>FAT</div>                                                                          {/* removing extra zeroes below*/}
+                            <div className="text-xl pt-2">{data.products[foodIndex].nutriments.fat !== undefined ? +Number(data.products[foodIndex].nutriments.fat).toFixed(3) + 'g' : '-'}</div>
                         </div>
                         <div className={`flex flex-col justify-between flex-1 text-xs ${warningColor(data.products[foodIndex].nutrient_levels.sugars)} p-2 pb-4`}>
                             <div>SUGARS</div>
-                            <div className="text-xl pt-2">{data.products[foodIndex].nutriments.sugars}g</div>
+                            <div className="text-xl pt-2">{data.products[foodIndex].nutriments.sugars !== undefined ? +Number(data.products[foodIndex].nutriments.sugars).toFixed(3) + 'g' : '-'}</div>
                         </div>
                         <div className={`flex flex-col justify-between flex-1 text-xs ${warningColor(data.products[foodIndex].nutrient_levels['saturated-fat'])} p-2 pb-4`}>
                             <div>SATURATED FAT</div>
-                            <div className="text-xl pt-2">{data.products[foodIndex].nutriments['saturated-fat']}g</div>
+                            <div className="text-xl pt-2">{data.products[foodIndex].nutriments['saturated-fat'] !== undefined ? +Number(data.products[foodIndex].nutriments['saturated-fat']).toFixed(3) + 'g' : '-'}</div>
                         </div>
                         <div className={`flex flex-col justify-between flex-1 text-xs ${warningColor(data.products[foodIndex].nutrient_levels.salt)} p-2 pb-4`}>
                             <div>SALT</div>
-                            <div className="text-xl pt-2">{data.products[foodIndex].nutriments.salt}g</div>
+                            <div className="text-xl pt-2">{data.products[foodIndex].nutriments.salt !== undefined ? +Number(data.products[foodIndex].nutriments.salt).toFixed(3) + 'g' : '-'}</div>
                         </div>
                     </div>
                 </div>
+                {data.products[foodIndex].nutriscore_grade !== undefined && 
                 <div id="nutri-score" className="flex flex-wrap m-3 mb-10 bg-gray-200 gap-px rounded-md shadow-card">
                     <div className="bg-teal-500 w-full p-2 rounded-md rounded-b-none">
                         <div className="text-2xl text-gray-200 text-center font-semibold">Nutri-score</div>
@@ -227,7 +248,8 @@ export default function() {
                         </div>
                     </div>
                 </div>
-                <table id="nutri-facts" className="table-auto bg-white text-sm">
+                }
+                <table id="nutri-facts" className="table-auto w-full bg-white text-sm">
                     <thead className="bg-gray-400">
                         <tr>
                         <th className="px-1 text-left font-semibold">Nutrition facts</th>
@@ -238,83 +260,103 @@ export default function() {
                     <tbody className="bg-gray-300">
                     <tr className="border-b-2 border-white">
                         <td className="px-2">Energy (kJ)</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kj_100g'] !== undefined ? data.products[foodIndex].nutriments['energy-kj_100g'] + ' kj' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kj_serving'] !== undefined ? data.products[foodIndex].nutriments['energy-kj_serving'] + ' kj' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kj_100g'] !== undefined ? +Number(data.products[foodIndex].nutriments['energy-kj_100g']).toFixed(2) + ' kj' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kj_serving'] !== undefined ? +Number(data.products[foodIndex].nutriments['energy-kj_serving']).toFixed(2) + ' kj' : '?'}</td>
                         </tr>
                         <tr className="border-b-2 border-white">
                         <td className="px-2">Energy (kcal)</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kcal_100g'] !== undefined ? data.products[foodIndex].nutriments['energy-kcal_100g'] + ' kcal' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kcal_serving'] !== undefined ? data.products[foodIndex].nutriments['energy-kcal_serving'] + ' kcal' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kcal_100g'] !== undefined ? +Number(data.products[foodIndex].nutriments['energy-kcal_100g']).toFixed(2) + ' kcal' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kcal_serving'] !== undefined ? +Number(data.products[foodIndex].nutriments['energy-kcal_serving']).toFixed(2) + ' kcal' : '?'}</td>
                         </tr>
                         <tr className="border-b-2 border-white">
                         <td className="px-2">Energy</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kj_100g'] !== undefined ? data.products[foodIndex].nutriments['energy-kj_100g'] + ' kj' : '?'}, {data.products[foodIndex].nutriments['energy-kcal_100g'] !== undefined ? data.products[foodIndex].nutriments['energy-kcal_100g'] + ' kcal' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kj_serving'] !== undefined ? data.products[foodIndex].nutriments['energy-kj_serving'] + ' kj, ' : '?'}, {data.products[foodIndex].nutriments['energy-kcal_serving'] !== undefined ? data.products[foodIndex].nutriments['energy-kcal_serving'] + ' kcal' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kj_100g'] !== undefined ? +Number(data.products[foodIndex].nutriments['energy-kj_100g']).toFixed(2) : '?'} kj, {data.products[foodIndex].nutriments['energy-kcal_100g'] !== undefined ? +Number(data.products[foodIndex].nutriments['energy-kcal_100g']).toFixed(2) : '?'} kcal</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['energy-kj_serving'] !== undefined ? +Number(data.products[foodIndex].nutriments['energy-kj_serving']).toFixed(2) : '?'} kj, {data.products[foodIndex].nutriments['energy-kcal_serving'] !== undefined ? +Number(data.products[foodIndex].nutriments['energy-kcal_serving']).toFixed(2) : '?'} kcal</td>
                         </tr>
                         <tr>
                         <td className="px-2">Fat</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.fat_100g !== undefined ? data.products[foodIndex].nutriments.fat_100g + ' g' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.fat_serving !== undefined ? data.products[foodIndex].nutriments.fat_serving + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.fat_100g !== undefined ? +Number(data.products[foodIndex].nutriments.fat_100g).toFixed(2) + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.fat_serving !== undefined ? +Number(data.products[foodIndex].nutriments.fat_serving).toFixed(2) + ' g' : '?'}</td>
                         </tr>
                         <tr className="bg-gray-200 border-b-2 border-white">
                         <td className="px-2 pl-3">- Saturated fat</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['saturated-fat_100g'] !== undefined ? data.products[foodIndex].nutriments['saturated-fat_100g'] + ' g' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['saturated-fat_serving'] !== undefined ? data.products[foodIndex].nutriments['saturated-fat_serving'] + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['saturated-fat_100g'] !== undefined ? +Number(data.products[foodIndex].nutriments['saturated-fat_100g']).toFixed(2) + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments['saturated-fat_serving'] !== undefined ? +Number(data.products[foodIndex].nutriments['saturated-fat_serving']).toFixed(2) + ' g' : '?'}</td>
                         </tr>
                         <tr>
                         <td className="px-2">Carbohydrates</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.carbohydrates_100g !== undefined ? data.products[foodIndex].nutriments.carbohydrates_100g + ' g' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.carbohydrates_serving !== undefined ? data.products[foodIndex].nutriments.carbohydrates_serving + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.carbohydrates_100g !== undefined ? +Number(data.products[foodIndex].nutriments.carbohydrates_100g).toFixed(2) + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.carbohydrates_serving !== undefined ? +Number(data.products[foodIndex].nutriments.carbohydrates_serving).toFixed(2) + ' g' : '?'}</td>
                         </tr>
                         <tr className="bg-gray-200 border-b-2 border-white">
                         <td className="px-2">- Sugars</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.sugars_100g !== undefined ? data.products[foodIndex].nutriments.sugars_100g + ' g' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.sugars_serving !== undefined ? data.products[foodIndex].nutriments.sugars_serving + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.sugars_100g !== undefined ? +Number(data.products[foodIndex].nutriments.sugars_100g).toFixed(2) + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.sugars_serving !== undefined ? +Number(data.products[foodIndex].nutriments.sugars_serving).toFixed(2) + ' g' : '?'}</td>
                         </tr>
                         <tr className="border-b-2 border-white">
                         <td className="px-2">Fibers</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.fibers_100g !== undefined ? data.products[foodIndex].nutriments.fibers_100g + ' g' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.fibers_serving !== undefined ? data.products[foodIndex].nutriments.fibers_serving + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.fibers_100g !== undefined ? +Number(data.products[foodIndex].nutriments.fibers_100g).toFixed(2) + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.fibers_serving !== undefined ? +Number(data.products[foodIndex].nutriments.fibers_serving).toFixed(2) + ' g' : '?'}</td>
                         </tr>
                         <tr className="border-b-2 border-white">
                         <td className="px-2">Proteins</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.proteins_100g !== undefined ? data.products[foodIndex].nutriments.proteins_100g + ' g' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.proteins_serving !== undefined ? data.products[foodIndex].nutriments.proteins_serving + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.proteins_100g !== undefined ? +Number(data.products[foodIndex].nutriments.proteins_100g).toFixed(2) + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.proteins_serving !== undefined ? +Number(data.products[foodIndex].nutriments.proteins_serving).toFixed(2) + ' g' : '?'}</td>
                         </tr>                       
                         <tr>
                         <td className="px-2">Salt</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.salt_100g !== undefined ? data.products[foodIndex].nutriments.salt_100g + ' g' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.salt_serving !== undefined ? data.products[foodIndex].nutriments.salt_serving + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.salt_100g !== undefined ? +Number(data.products[foodIndex].nutriments.salt_100g).toFixed(2) + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.salt_serving !== undefined ? +Number(data.products[foodIndex].nutriments.salt_serving).toFixed(2) + ' g' : '?'}</td>
                         </tr>
                         <tr className="bg-gray-200">
                         <td className="px-2">- Sodium</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.sodium_100g !== undefined ? data.products[foodIndex].nutriments.sodium_100g + ' g' : '?'}</td>
-                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.sodium_serving !== undefined ? data.products[foodIndex].nutriments.sodium_serving + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.sodium_100g !== undefined ? +Number(data.products[foodIndex].nutriments.sodium_100g).toFixed(2) + ' g' : '?'}</td>
+                        <td className="px-2 text-right">{data.products[foodIndex].nutriments.sodium_serving !== undefined ? +Number(data.products[foodIndex].nutriments.sodium_serving).toFixed(2) + ' g' : '?'}</td>
                         </tr>
                     </tbody>
                     </table>
+                {data.products[foodIndex].ingredients_text && 
                 <div id="ingredients" className="m-3">
                     <h2 className="text-white text-lg mb-1">
                     Ingredients
                     </h2>
-                    <span className="text-gray-100 text-sm">
-                    Mąka pszenna, woda, 9,1% ser Edamski, 8,0% warzywa w zmiennych proporcjach (bakłażany grillowane, cebula czerwona, papryka czerwona, papryka żółta, marchew), 4,5% mięso wołowe smażone (wołowina, woda, sól, przyprawy, dekstroza, hydrolizowane białka roślinne, zioła, ekstrakt drożdżowy, czosnek w proszku, cebula w proszku, ekstrakt przypraw), koncentrat pomidorowy, śmietana, tłuszcz palmowy, olej rzepakowy, drożdże piekarskie, sól, cukier, przyprawy, skrobia modyfikowana, mleko odtłuszczone w proszku, aromat, barwnik (karoteny), ekstrakt z chilli. Możliwa obecność soi, gorczycy.
+                    <span className="text-gray-200 text-sm font-semibold">
+                    {data.products[foodIndex].ingredients_text}
                     </span>
+                    {data.products[foodIndex].allergens_tags.length ? 
+                    <div className="text-white text-md font-bold mt-2">
+                    Substances or products causing allergies or intolerances: {(data.products[foodIndex].allergens_tags.map(allergen => allergen.slice(3))).join(', ')}
+                    </div>
+                    : null
+                    }
                 </div>
+                }
+                {(  
+                    data.products[foodIndex].image_url || 
+                    data.products[foodIndex].image_nutrition_url ||
+                    data.products[foodIndex].image_ingredients_url 
+                ) &&
                 <div id="images" className="m-3">
                     <h2 className="text-white text-lg mb-2">
                     Images
                     </h2>
-                    <div className="mb-2 border-solid border-2 border-white h-full w-full p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
-                        <img className="object-contain h-full w-full" src={placeholder2}></img>
+                    {data.products[foodIndex].image_url && 
+                    <div className="mb-2 mx-auto border-solid border-2 border-white h-full w-full max-w-md p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
+                        <img className="mx-auto object-contain h-auto w-auto" src={data.products[foodIndex].image_url}></img>
                     </div>
-                    <div className="mb-2 border-solid border-2 border-white h-full w-full p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
-                        <img className="object-contain h-full w-full" src={placeholder}></img>
+                    }
+                    {data.products[foodIndex].image_nutrition_url &&
+                    <div className="mb-2 mx-auto border-solid border-2 border-white h-full w-full max-w-md p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
+                        <img className="mx-auto  object-contain h-auto w-auto" src={data.products[foodIndex].image_nutrition_url}></img>
                     </div>
-                    <div className="mb-2 border-solid border-2 border-white h-full w-full p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
-                        <img className="object-contain h-full w-full" src={placeholder}></img>
+                    }
+                    {data.products[foodIndex].image_ingredients_url &&
+                    <div className="mb-2 mx-auto border-solid border-2 border-white h-full w-full max-w-md p-px rounded-md shadow-card bg-gray-300 overflow-hidden">  
+                        <img className="mx-auto  object-contain h-auto w-auto" src={data.products[foodIndex].image_ingredients_url}></img>   
                     </div>
+                    }
                 </div>
+                }
                 <div id="up-button" className="h-16 bg-gray-300 flex text-4xl text-center font-bold justify-center items-center cursor-pointer" onClick={() => {
                      document.body.scrollTop = 0;
                      document.documentElement.scrollTop = 0;
@@ -329,21 +371,46 @@ export default function() {
                     }}>
                 &#10554; results
                 </div>
+                <div id="creator-credit-search" className="bg-red-300 p-2 font-semibold text-center text-sm">
+                    All of the data and images comes from the&nbsp;<a target="_blank" href="https://world.openfoodfacts.org/" className="underline">openfoodfacts.org</a> database. 
+                    Those elements are licenced under the&nbsp;
+                    <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/" className="underline">Creative Commons Attribution-ShareAlike 4.0 International license</a> and&nbsp;
+                    <a target="_blank" href="https://opendatacommons.org/licenses/odbl/1-0/" className="underline">Open Data Commons Open Database License</a>.
+                </div>
             </div>
             :
             <>
+            {data.count && 
             <div className="p-2 pl-4">
-                <div className="font-bold text-4xl text-red-700">{query}</div>
-                <div className="font-semibold text-xl">search results</div>
+                <div className="font-bold text-4xl text-red-700">{query}<span className="text-4xl text-black font-hairline">: page {page}</span></div>
+                <div className="font-semibold text-xl">{data.count} search results on {Math.ceil(data.count/20)} {data.count<21 ? 'page' : 'pages'}</div>
             </div>
+            }
             <div className="pt-6 flex flex-wrap content-around justify-center bg-gray-200">
                 {searchResults()}
             </div>
             <div className=" py-4 font-semibold text-xl text-gray-800 text-center">
                 {pagination()}
             </div>
+            <div id="creator-credit-search" className="bg-red-300 p-2 font-semibold text-center text-sm">
+            All of the data and images comes from the&nbsp;<a target="_blank" href="https://world.openfoodfacts.org/" className="underline">openfoodfacts.org</a> database. 
+            Those elements are licenced under the&nbsp;
+             <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/" className="underline">Creative Commons Attribution-ShareAlike 4.0 International license</a> and&nbsp;
+             <a target="_blank" href="https://opendatacommons.org/licenses/odbl/1-0/" className="underline">Open Data Commons Open Database License</a>.
+            </div>
             </>
             } 
         </div>
+        :
+            (data !== 'pending' ?
+            <div className="pt-24 px-10 flex flex-col text-lg font-semibold text-gray-900 justify-center items-center text-center">          
+                <div>No products found</div>
+                <div className="text-sm text-gray-600">try to type a different phrase...</div>
+            </div>
+            : <div className="pt-24 px-10 flex flex-col text-lg font-semibold text-gray-900 justify-center items-center text-center">          
+                <div>Searching...</div>
+            </div>)
+    }
+    </>
     )
 }

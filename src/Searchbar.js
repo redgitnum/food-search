@@ -1,18 +1,22 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { fetchFood, modalChange } from './features'
 
 export default function() {
     const dispatch = useDispatch()
 
+    const { query, page } = useSelector(state => state)
+
 
     const searchFood = (e) => {
         e.preventDefault()
         dispatch(modalChange(false))
-        dispatch(fetchFood({
-            value: e.target.searchInput.value.trim(), 
-            page: 1
-        }))
+        if(e.target.searchInput.value.trim() !== query || page !== 1) {
+            dispatch(fetchFood({
+                value: e.target.searchInput.value.trim(), 
+                page: 1
+            }))
+        }
     }
     return(
         <div className="fixed w-full">
