@@ -22,10 +22,13 @@ export const fetchFood = createAsyncThunk(
 
 export const foodSlice = createSlice({
     name: 'search',
-    initialState: {data: {}, loader: false, query: '', page: '', modal: false},
+    initialState: {data: {}, loader: false, query: '', page: '', modal: false, foodIndex: null, },
     reducers: {
         modalChange: (state, action) => {
             state.modal = action.payload
+        },
+        foodIndexChange: (state, action) => {
+            state.foodIndex = action.payload
         }
     },
     extraReducers: {
@@ -46,7 +49,7 @@ export const foodSlice = createSlice({
     }
 })
 
-export const { modalChange } = foodSlice.actions
+export const { modalChange, foodIndexChange } = foodSlice.actions
 
 export default configureStore({
     reducer: foodSlice.reducer

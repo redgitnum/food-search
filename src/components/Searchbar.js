@@ -1,12 +1,11 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchFood, modalChange } from './features'
+import { fetchFood, modalChange } from '../features'
 
 export default function() {
     const dispatch = useDispatch()
 
     const { query, page } = useSelector(state => state)
-
 
     const searchFood = (e) => {
         e.preventDefault()
