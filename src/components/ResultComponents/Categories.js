@@ -18,7 +18,7 @@ export const ResultTitle = () => {
             <div>
                 <div className="w-32 h-32 sm:w-48 sm:h-48 border-solid border-2 border-white p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
                 {data.products[foodIndex].image_small_url ? 
-                <img className="object-contain w-full h-full" src={data.products[foodIndex].image_small_url}></img>
+                <img alt="" className="object-contain w-full h-full" src={data.products[foodIndex].image_small_url}></img>
                 :
                 <PlaceholderImg className="object-contain w-full h-full text-white"/>
                 }
@@ -71,7 +71,7 @@ export const Warnings = () => {
                     <div className="text-xs text-gray-200 font-bold">INGREDIENTS ANALYSIS</div>
                     <div className="flex flex-wrap gap-2 p-2 justify-center">
                         {data.products[foodIndex].ingredients_analysis_tags && data.products[foodIndex].ingredients_analysis_tags.map(item => 
-                            <div className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm text-center font-semibold">{item.slice(3)}</div>
+                            <div key={item} className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm text-center font-semibold">{item.slice(3)}</div>
                         )}
                     </div>
                 </div>
@@ -79,7 +79,7 @@ export const Warnings = () => {
                     <div className="text-xs text-gray-200 font-bold">ADDITIVES</div>
                     <div className="flex flex-wrap gap-2 p-2 justify-center">
                         {data.products[foodIndex].additives_tags && data.products[foodIndex].additives_tags.map(additive => 
-                            <div className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm text-center font-semibold">{additive.slice(3)}</div>
+                            <div key={additive} className="bg-red-700 rounded-md p-px px-2 shadow-pill text-gray-100 text-sm text-center font-semibold">{additive.slice(3)}</div>
                         )}
                     </div>
                 </div>
@@ -304,17 +304,17 @@ export const Images = () => {
             </h2>
             {data.products[foodIndex].image_url && 
             <div className="mb-2 mx-auto border-solid border-2 border-white h-full w-full max-w-md p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
-                <img className="mx-auto object-contain h-auto w-auto" src={data.products[foodIndex].image_url}></img>
+                <img alt="" className="mx-auto object-contain h-auto w-auto" src={data.products[foodIndex].image_url}></img>
             </div>
             }
             {data.products[foodIndex].image_nutrition_url &&
             <div className="mb-2 mx-auto border-solid border-2 border-white h-full w-full max-w-md p-px rounded-md shadow-card bg-gray-300 overflow-hidden">
-                <img className="mx-auto  object-contain h-auto w-auto" src={data.products[foodIndex].image_nutrition_url}></img>
+                <img alt="" className="mx-auto  object-contain h-auto w-auto" src={data.products[foodIndex].image_nutrition_url}></img>
             </div>
             }
             {data.products[foodIndex].image_ingredients_url &&
             <div className="mb-2 mx-auto border-solid border-2 border-white h-full w-full max-w-md p-px rounded-md shadow-card bg-gray-300 overflow-hidden">  
-                <img className="mx-auto  object-contain h-auto w-auto" src={data.products[foodIndex].image_ingredients_url}></img>   
+                <img alt="" className="mx-auto  object-contain h-auto w-auto" src={data.products[foodIndex].image_ingredients_url}></img>   
             </div>
             }
         </div>

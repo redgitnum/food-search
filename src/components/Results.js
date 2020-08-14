@@ -24,7 +24,7 @@ export default function() {
                 {!data.products[foodIndex].complete ?
                     <div id="entry-incomplete" className="p-3 bg-red-300 font-semibold text-lg">
                         This product page is not complete. 
-                        You can help to complete it by going to <a href={data.products[foodIndex].url} target="_blank" className="underline">Open Food Facts product page</a> and editing or adding more data.
+                        You can help to complete it by going to <a href={data.products[foodIndex].url} rel="noopener noreferrer" target="_blank" className="underline">Open Food Facts product page</a> and editing or adding more data.
                     </div>
                 : null}
                 <Category.ResultTitle />

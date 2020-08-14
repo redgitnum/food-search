@@ -24,7 +24,7 @@ const SearchResults = () => {
                     }}>
                     <div className="h-32 w-full">
                         {product.image_small_url ? 
-                        <img className="object-contain w-full h-full" src={product.image_small_url}></img>
+                        <img alt="" className="object-contain w-full h-full" src={product.image_small_url}></img>
                         :
                         <PlaceholderImg className="object-contain w-full h-full text-white"/>
                         }
@@ -45,7 +45,7 @@ const SearchResults = () => {
                 <div className="bg-gray-200">
                     <div className="flex">
                     <div className="p-2 rounded-md rounded-b-none rounded-r-none bg-blue-400 text-3xl cursor-pointer" onClick={() => {
-                        if(page!=1){ 
+                        if(page!==1){ 
                             dispatch(fetchFood({
                                 value: query, 
                                 page: page - 1
@@ -54,7 +54,7 @@ const SearchResults = () => {
                             }}>&#10508;</div>
                         <form className=" w-20 border-t border-b border-blue-400 text-4xl" id="new-page" onLoad={(e) => e.target.reset()} onSubmit={(e) => {
                             e.preventDefault()
-                            Number(e.target.page.value) != page &&
+                            Number(e.target.page.value) !== page &&
                             dispatch(fetchFood({
                                 value: query, 
                                 page: Number(e.target.page.value)
@@ -71,7 +71,7 @@ const SearchResults = () => {
                             </input>
                         </form>
                     <div className="p-2 rounded-md rounded-b-none rounded-l-none bg-blue-400 text-3xl cursor-pointer" onClick={() => {
-                        if(page!= maxPage){ 
+                        if(page!== maxPage){ 
                         dispatch(fetchFood({
                                 value: query, 
                                 page: page + 1
